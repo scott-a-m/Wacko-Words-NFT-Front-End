@@ -1,0 +1,203 @@
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    background-image: linear-gradient(115deg,
+            rgba(255, 153, 247, 0.6),
+            rgba(255, 255, 255, 0.6)),
+        url(https://scott-a-m.github.io/hosted-assets/grunge-2667529_1920.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+.App {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+
+
+
+}
+
+#info {
+    max-width: 730px;
+    text-align: center;
+    margin: 0 auto;
+    padding-top: 30px;
+    padding-bottom: 50px;
+    font-family: 'Akaya Telivigala', cursive;
+    font-size: 1.4rem;
+}
+
+.container {
+    max-width: 730px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(115deg,
+            rgba(243, 179, 243, 0.8),
+            rgba(255, 255, 255, 0.8));
+    border-radius: 1rem;
+}
+
+.header-container {
+    padding-top: 50px;
+}
+
+.header {
+    margin: 0;
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.sub-text {
+    font-size: 25px;
+    font-family: 'Sedgwick Ave', cursive;
+    color: black;
+}
+
+.header-text {
+    color: black;
+    text-shadow: 0 10px 12px rgba(247, 35, 247, 0.8);
+    font-family: 'Comforter', cursive;
+    font-size: 4rem;
+}
+
+.cta-button {
+    height: 45px;
+    border: 0;
+    width: auto;
+    padding-left: 40px;
+    padding-right: 40px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: black;
+    text-shadow: 0 4px 8px white;
+    font-family: sans-serif;
+    background: rgba(239, 86, 239, 0.8);
+    margin-bottom: 20px;
+
+}
+
+
+.nft {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 0.5rem;
+    max-width: 400px;
+}
+
+
+.mintCount {
+    color: black;
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Comforter', cursive;
+    margin-bottom: 60px;
+
+}
+
+.footer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 30px;
+    margin-top: 30px;
+}
+
+.twitter-logo {
+    width: 35px;
+    height: 35px;
+}
+
+.footer-text {
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.loader {
+    border: 16px solid rgba(242, 156, 242, 0.8);
+    border-top: 16px solid rgba(247, 35, 247, 0.8);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
+
+#minting-block {
+    margin-bottom: 2rem;
+}
+
+.mining {
+    text-shadow: 0 10px 12px rgba(247, 35, 247, 0.8);
+    font-family: 'Comforter', cursive;
+    font-weight: bolder;
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.error {
+    color: red;
+    font-family: 'Akaya Telivigala', cursive;
+    font-size: 1.4rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.cta-button:hover {
+    color: white;
+    text-shadow: 0 4px 8px black;
+}
+
+a:hover {
+    color: black;
+    text-shadow: 0 10px 12px rgba(247, 35, 247, 0.8);
+}
+
+a:visited {
+    color: black;
+}
+
+
+#not-connected {
+    margin-bottom: 4rem;
+}
+
+cont {
+    margin-top: 2rem;
+}
+
+#notice {
+    margin: 0 auto;
+    background: linear-gradient(115deg,
+            rgba(242, 156, 242, 0.8),
+            rgba(255, 255, 255, 0.6));
+    color: black;
+    padding: 0.5rem;
+    border-radius: 0.2rem;
+    max-width: 550px;
+    text-align: center !important;
+    font-size: 1rem;
+}
+
+#notice-text {
+    font-family: 'Jost', sans-serif;
+}
