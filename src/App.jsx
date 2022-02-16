@@ -13,20 +13,23 @@ const TWITTER_HANDLE = "scott_xiaohu";
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
-  /*
-   * Just a state variable we use to store our user's public wallet. Don't forget to import useState.
-   */
+  // smart contract details
 
   const CONTRACT_ADDRESS = "0x5A4BB9aE5ca5bE73997b523108b52B0D52eaCf4c";
   const contractABI = abi.abi;
 
+  // state variables
+
   const [currentAccount, setCurrentAccount] = useState("");
   const [mintCount, setMintCount] = useState("?");
   const [mining, setMiningStatus] = useState("");
-  const [error, setErrorStatus] = useState("");
+  const [error, setErrMsg] = useState("");
   const [tokenIds, addTokenId] = useState([]);
   const [status, changeStatus] = useState("danger");
   const [checked, setChecked] = useState(false);
+  const [contract, setContract] = useState(null);
+
+  // function to make sure users have acknowledged testnet notice
 
   const notice = () => {
     if (status === "success") {
@@ -34,30 +37,12 @@ const App = () => {
     } else {
       changeStatus("success");
     }
-
     setChecked((old) => !old);
   };
 
-  const checkChain = async () => {
-    let chainId = await ethereum.request({ method: "eth_chainId" });
-    console.log("Connected to chain " + chainId);
-    const appChainId = "0x4";
-    if (chainId !== appChainId) {
-      setErrorStatus(
-        "Please make sure your wallet is connected to the Rinkeby Test Network"
-      );
-      setTimeout(() => {
-        setErrorStatus("");
-      }, 3000);
-      return false;
-    } else {
-      return true;
-    }
-  };
+  // function to save solidity minting contract in state if present
 
-  // Check whether wallet's connected
-
-  const getMintCount = async () => {
+  const checkContract = async () => {
     try {
       const { ethereum } = window;
       if (ethereum) {
@@ -68,72 +53,96 @@ const App = () => {
           contractABI,
           signer
         );
-
-        const mints = await mintContract.getTotalNFTCount();
-        console.log(mints);
-        setMintCount(mints);
-        return mints;
-      } else {
-        console.log("Ethereum object does not exist!");
+        setContract(mintContract);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
+  // function to add delay for error messages disappearing
+
+  const delayedMsg = (msg, time) => {
+    setErrMsg(msg);
+    setTimeout(() => {
+      setErrMsg("");
+    }, time);
+  };
+
+  // function for checking whether user is connected to correct blockchain
+
+  const checkChain = async (chainName) => {
+    const chains = {
+      Rinkeby: "0x4",
+      Ropsten: "0x3",
+    };
+
+    let chainId = await ethereum.request({ method: "eth_chainId" });
+    console.log("Connected to chain " + chainId);
+
+    const appChainId = chains[chainName];
+    console.log(appChainId);
+
+    if (chainId !== appChainId) {
+      delayedMsg(
+        `Please make sure your wallet is connected to the ${chainName} Test Network`,
+        2000
+      );
+      return false;
+    }
+    return true;
+  };
+
+  // get current mint count function
+
+  const getMintCount = async () => {
+    try {
+      const mints = await contract.getTotalNFTCount();
+      console.log(mints);
+      setMintCount(mints);
+      return mints;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // check if wallet is connected function
+
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
+    if (!ethereum) return alert("Please install Metamask.");
+    console.log(`We have the ethereum object: ${ethereum}`);
 
-    if (!ethereum) {
-      console.log("Please install Metamask.");
-      return;
-    } else {
-      console.log(`We have the ethereum object: ${ethereum}`);
-    }
-
-    const chain = await checkChain();
-
-    if (!chain) {
-      return;
-    }
+    const chain = await checkChain("Rinkeby");
+    if (!chain) return;
 
     const accounts = await ethereum.request({ method: "eth_accounts" });
 
-    // user may have multiple active accounts; we use the first one
+    // user may have multiple active accounts; the first one is taken
 
     if (accounts.length !== 0) {
       const account = accounts[0];
       console.log(`Found authourised account: ${account}`);
       setCurrentAccount(account);
-      getMintCount();
-      mintListener();
+      checkContract();
     } else {
       console.log("No authorised account found. Please Connect your wallet.");
     }
   };
 
+  // connect wallet function
+
   const connectWallet = async () => {
     try {
+      if (!checked)
+        return delayedMsg("Please first acknowledge the notice below", 3000);
+
       const { ethereum } = window;
 
-      if (!checked) {
-        setErrorStatus("Please first acknowledge the notice below");
-        setTimeout(() => {
-          setErrorStatus("");
-        }, 3000);
-        return;
-      }
+      if (!ethereum) return alert("Please install Metamask");
 
-      if (!ethereum) {
-        alert("Please install Metamask");
-        return;
-      }
-
-      const chain = await checkChain();
-
-      if (!chain) {
-        return;
-      }
+      const chain = await checkChain("Rinkeby");
+      if (!chain) return;
 
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
@@ -141,89 +150,81 @@ const App = () => {
 
       console.log(`${accounts[0]} is connected`);
       setCurrentAccount(accounts[0]);
-      getMintCount();
-      mintListener();
+      checkContract();
     } catch (error) {
-      setErrorStatus("Sorry, an error has occured. Please try again.");
-      setTimeout(() => {
-        setErrorStatus("");
-      }, 3000);
       console.log(error);
+      return delayedMsg("Sorry, an error has occured. Please try again.", 3000);
     }
   };
+
+  // NFT minting function
 
   const mintNFT = async () => {
-    setErrorStatus("");
-
     try {
       const { ethereum } = window;
-      if (ethereum) {
-        const chain = await checkChain();
+      if (!ethereum) return alert("Please install Metamask.");
+      console.log(`We have the ethereum object: ${ethereum}`);
 
-        if (!chain) {
-          return;
-        }
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const connectedContract = new ethers.Contract(
-          CONTRACT_ADDRESS,
-          contractABI,
-          signer
-        );
-        let nftTxn = await connectedContract.makeAnEpicNFT();
-        console.log("Minting...");
-        setMiningStatus("Minting");
-        nftTxn.wait();
-        console.log(
-          `Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
-        );
-      } else {
-        console.log("Ethereum object does not exist.");
-      }
+      const chain = await checkChain("Rinkeby");
+      if (!chain) return;
+
+      let nftTxn = await contract.makeAnEpicNFT();
+      console.log("Minting...");
+      setMiningStatus("Minting");
+      nftTxn.wait();
+      console.log(
+        `Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
+      );
     } catch (error) {
-      if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
-        setErrorStatus("Sorry, you've already used up your three mints");
-      } else {
-        setErrorStatus("Sorry, an error has occured. Please try again.");
-      }
       console.log(error.code);
+      if (error.code === "UNPREDICTABLE_GAS_LIMIT")
+        return delayedMsg(
+          "Sorry, you've already used up your three mints",
+          3000
+        );
+
+      return delayedMsg("Sorry, an error has occured. Please try again.", 3000);
     }
   };
 
-  // add mint listener
+  // add mint listener function
 
   const mintListener = async () => {
     const onNewMint = async (from, tokenId) => {
       setMiningStatus("");
+      getMintCount();
+      console.log("from:", from);
+      console.log("CA:", currentAccount);
 
-      const count = await getMintCount();
-      const countStr = count.toString();
-      let countInt = parseInt(countStr);
-      console.log(countInt);
-
-      console.log("NewMint", from, tokenId.toNumber());
-      alert(
-        `Hey there! We've minted your NFT and sent it to your wallet. It may take a short while to to show up on opensea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`
-      );
+      if (from.toLowerCase() === currentAccount) {
+        console.log("NewMint", from, tokenId.toNumber());
+        alert(
+          `Hey there! We've minted your NFT and sent it to your wallet. It may take a short while to to show up on opensea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`
+        );
+      }
     };
 
-    if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const mintContract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        contractABI,
-        signer
-      );
-      mintContract.on("NewEpicNFTMinted", onNewMint);
-    }
+    if (!contract) return;
+
+    console.log("listening for mints....");
+
+    getMintCount();
+    contract.on("NewEpicNFTMinted", onNewMint);
 
     return () => {
-      if (mintContract) {
-        mintContract.off("NewEpicNFTMinted", onNewMint);
+      if (contract) {
+        contract.off("NewEpicNFTMinted", onNewMint);
       }
     };
   };
+
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, []);
+
+  useEffect(() => {
+    mintListener();
+  }, [contract]);
 
   // Render Methods
   const renderNotConnectedContainer = () => (
@@ -267,12 +268,6 @@ const App = () => {
     </div>
   );
 
-  // create function to avoid overemitting events
-
-  useEffect(() => {
-    checkIfWalletIsConnected();
-  }, []);
-
   return (
     <div className="App">
       <div className="container">
@@ -310,19 +305,18 @@ const App = () => {
               .
             </p>
           </div>
-
+          {mining && (
+            <div id="minting-block">
+              <p className="mining">{mining}</p>
+              <p className="loader"></p>
+            </div>
+          )}
           <div>
             <p className="mintCount">{mintCount.toString()}/100 minted.</p>
           </div>
           {error && (
             <div>
               <p className="error">{error}</p>
-            </div>
-          )}
-          {mining && (
-            <div id="minting-block">
-              <p className="mining">{mining}</p>
-              <p className="loader"></p>
             </div>
           )}
           {currentAccount === "" ? (
