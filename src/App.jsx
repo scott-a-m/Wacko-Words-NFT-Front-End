@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./styles/App.css";
-import twitterLogo from "./assets/twitter-logo.svg";
-import one from "./assets/one.svg";
-import two from "./assets/two.svg";
-import three from "./assets/three.svg";
-import five from "./assets/five.svg";
 import { ethers } from "ethers";
 import abi from "./utils/WackoWordsNFT.json";
-
-// Constants
-const TWITTER_HANDLE = "scott_xiaohu";
-const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFreeCodeCamp,
+  faGithub,
+  faTwitter,
+} from "@fortawesome/free-brands-svg-icons";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 const App = () => {
   // smart contract details
@@ -28,6 +26,8 @@ const App = () => {
   const [status, changeStatus] = useState("danger");
   const [checked, setChecked] = useState(false);
   const [contract, setContract] = useState(null);
+  const [btn, setBtn] = useState({ disabled: false, opacity: 1 });
+  const [mintInfo, setMintInfo] = useState("");
 
   // function to make sure users have acknowledged testnet notice
 
@@ -160,6 +160,9 @@ const App = () => {
   // NFT minting function
 
   const mintNFT = async () => {
+    setBtn({ disabled: true, opacity: 0.5 });
+    setMintInfo("");
+
     try {
       const { ethereum } = window;
       if (!ethereum) return alert("Please install Metamask.");
@@ -169,14 +172,16 @@ const App = () => {
       if (!chain) return;
 
       let nftTxn = await contract.makeAnEpicNFT();
-      console.log("Minting...");
       setMiningStatus("Minting");
+      console.log("Minting...");
       nftTxn.wait();
       console.log(
         `Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
       );
     } catch (error) {
       console.log(error.code);
+      setBtn({ disabled: false, opacity: 1 });
+      setMiningStatus("");
       if (error.code === "UNPREDICTABLE_GAS_LIMIT")
         return delayedMsg(
           "Sorry, you've already used up your three mints",
@@ -191,16 +196,31 @@ const App = () => {
 
   const mintListener = async () => {
     const onNewMint = async (from, tokenId) => {
-      setMiningStatus("");
       getMintCount();
       console.log("from:", from);
       console.log("CA:", currentAccount);
 
       if (from.toLowerCase() === currentAccount) {
         console.log("NewMint", from, tokenId.toNumber());
-        alert(
-          `Hey there! We've minted your NFT and sent it to your wallet. It may take a short while to to show up on opensea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`
+        setMiningStatus("Mining Complete");
+        setTimeout(() => {
+          setMiningStatus("");
+        }, 2000);
+
+        setMintInfo(
+          <p>
+            Hey there! We've minted your NFT and sent it to your wallet. It may
+            take a short while to to show up on Opensea. Click{" "}
+            <a
+              href={`https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`}
+              target="_blank"
+            >
+              here
+            </a>{" "}
+            to view.
+          </p>
         );
+        setBtn({ disabled: false, opacity: 1 });
       }
     };
 
@@ -305,6 +325,7 @@ const App = () => {
               .
             </p>
           </div>
+          {mintInfo && <div id="mint-notice">{mintInfo}</div>}
           {mining && (
             <div id="minting-block">
               <p className="mining">{mining}</p>
@@ -325,41 +346,93 @@ const App = () => {
             <button
               onClick={mintNFT}
               className="cta-button connect-wallet-button"
+              disabled={btn.disabled}
+              style={{ opacity: btn.opacity }}
             >
               MINT
             </button>
           )}
         </div>
-        <div className="row align-items-center">
+        <div className="row align-items-center" style={{ marginTop: "2rem" }}>
           <div className="col-lg-6">
-            <img className="nft" src={two} alt="an NFT from the collection" />
+            <img
+              className="nft"
+              src="/assets/01.svg"
+              alt="an NFT from the collection"
+            />
           </div>
           <div className="col-lg-6">
-            <img className="nft" src={one} />
+            <img className="nft" src="/assets/02.svg" />
           </div>
           <div className="col-lg-6">
-            <img className="nft" src={three} alt="an NFT from the collection" />
+            <img
+              className="nft"
+              src="/assets/03.svg"
+              alt="an NFT from the collection"
+            />
           </div>
           <div className="col-lg-6">
-            <img className="nft" src={five} alt="an NFT from the collection" />
+            <img
+              className="nft"
+              src="/assets/04.svg"
+              alt="an NFT from the collection"
+            />
           </div>
         </div>
-        <div className="footer-container">
-          <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
+        <div id="contact-block">
+          <p id="designer">developed by Scott Mitchell</p>
           <a
-            className="footer-text"
-            href={TWITTER_LINK}
+            href="https://github.com/scott-a-m"
             target="_blank"
             rel="noreferrer"
-          >{`${TWITTER_HANDLE}`}</a>
-        </div>
-        <p style={{ paddingBottom: "30px", fontStyle: "italic" }}>
-          Built with{" "}
-          <a href="https://buildspace.so/" target="_blank">
-            Buildspace
+          >
+            <FontAwesomeIcon
+              icon={faGithub}
+              size="2x"
+              border
+              className="contact-icon"
+            />
           </a>
-          .
-        </p>
+          <a
+            href="https://twitter.com/_scott_a_m"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <FontAwesomeIcon
+              icon={faTwitter}
+              size="2x"
+              border
+              className="contact-icon"
+            />
+          </a>
+          <a
+            href="https://www.freecodecamp.org/scott-a-m"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <FontAwesomeIcon
+              icon={faFreeCodeCamp}
+              size="2x"
+              border
+              className="contact-icon"
+            />
+          </a>
+          <a href="mailto:scott_a_mitchell@163.com">
+            <FontAwesomeIcon
+              icon={faEnvelope}
+              size="2x"
+              border
+              className="contact-icon"
+            />
+          </a>
+          <p style={{ marginTop: "2rem" }}>
+            with{" "}
+            <a href="https://buildspace.so/" target="_blank">
+              Buildspace
+            </a>
+            .
+          </p>
+        </div>
       </div>
     </div>
   );
