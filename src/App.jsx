@@ -394,7 +394,7 @@ const App = () => {
             />
           </a>
           <a
-            href="https://twitter.com/_scott_a_m"
+            href="https://twitter.com/scotts-dev"
             target="_blank"
             rel="noreferrer"
           >
