@@ -380,7 +380,12 @@ const App = () => {
           </div>
         </div>
         <div id="contact-block">
-          <p id="designer">developed by Scott Mitchell</p>
+          <h4 id="designer">
+            developed by{" "}
+            <a href="https://scottsdev.net" target="_blank">
+              Scott Mitchell
+            </a>
+          </h4>
           <a
             href="https://github.com/scott-a-m"
             target="_blank"
@@ -417,7 +422,7 @@ const App = () => {
               className="contact-icon"
             />
           </a>
-          <a href="mailto:scott_a_mitchell@163.com">
+          <a href="mailto:scott@scottsdev.net">
             <FontAwesomeIcon
               icon={faEnvelope}
               size="2x"

@@ -1,3 +1,42 @@
+/* comforter-regular - latin */
+@font-face {
+    font-family: 'Comforter';
+    font-style: normal;
+    font-weight: 400;
+    src: local(''),
+        url('../../public/fonts/comforter-v5-latin-regular.woff2') format('woff2'),
+        /* Chrome 26+, Opera 23+, Firefox 39+ */
+        url('../../public/fonts/comforter-v5-latin-regular.woff') format('woff');
+    /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* akaya-telivigala-regular - latin */
+@font-face {
+    font-family: 'Akaya Telivigala';
+    font-style: normal;
+    font-weight: 400;
+    src: local(''),
+        url('../../public/fonts/akaya-telivigala-v22-latin-regular.woff2') format('woff2'),
+        /* Chrome 26+, Opera 23+, Firefox 39+ */
+        url('../../public/fonts/akaya-telivigala-v22-latin-regular.woff') format('woff');
+    /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* sedgwick-ave-regular - latin */
+@font-face {
+    font-family: 'Sedgwick Ave';
+    font-style: normal;
+    font-weight: 400;
+    src: local(''),
+        url('../../public/fonts/sedgwick-ave-v12-latin-regular.woff2') format('woff2'),
+        /* Chrome 26+, Opera 23+, Firefox 39+ */
+        url('../../public/fonts/sedgwick-ave-v12-latin-regular.woff') format('woff');
+    /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+
+
+
 body::before {
     content: '';
     position: fixed;
@@ -104,7 +143,9 @@ body::before {
 
 }
 
-a {color: black}
+a {
+    color: black
+}
 
 
 #mint-notice {
@@ -143,8 +184,7 @@ a {color: black}
 }
 
 #designer {
-    font-size: 2rem;
-    text-shadow: 0 10px 12px rgba(247, 35, 247, 0.8);
+    font-size: 1.8rem;
     font-family: 'Comforter', cursive;
 }
 
