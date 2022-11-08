@@ -75,6 +75,7 @@ const App = () => {
     const chains = {
       Rinkeby: "0x4",
       Ropsten: "0x3",
+      Goerli: "0x5",
     };
 
     let chainId = await ethereum.request({ method: "eth_chainId" });
@@ -113,7 +114,7 @@ const App = () => {
     if (!ethereum) return alert("Please install Metamask.");
     console.log(`We have the ethereum object: ${ethereum}`);
 
-    const chain = await checkChain("Rinkeby");
+    const chain = await checkChain("Goerli");
     if (!chain) return;
 
     const accounts = await ethereum.request({ method: "eth_accounts" });
@@ -141,7 +142,7 @@ const App = () => {
 
       if (!ethereum) return alert("Please install Metamask");
 
-      const chain = await checkChain("Rinkeby");
+      const chain = await checkChain("Goerli");
       if (!chain) return;
 
       const accounts = await ethereum.request({
@@ -168,7 +169,7 @@ const App = () => {
       if (!ethereum) return alert("Please install Metamask.");
       console.log(`We have the ethereum object: ${ethereum}`);
 
-      const chain = await checkChain("Rinkeby");
+      const chain = await checkChain("Goerli");
       if (!chain) return;
 
       let nftTxn = await contract.makeAnEpicNFT();
@@ -176,7 +177,7 @@ const App = () => {
       console.log("Minting...");
       nftTxn.wait();
       console.log(
-        `Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
+        `Mined, see transaction: https://goerli.etherscan.io/tx/${nftTxn.hash}`
       );
     } catch (error) {
       console.log(error.code);
@@ -258,7 +259,7 @@ const App = () => {
       <div id="cont">
         <div id="notice">
           <p id="notice-text">
-            Wacko Words NFT lives on Ethereum's Rinkeby Test Network.{" "}
+            Wacko Words NFT lives on Ethereum's Goerli Test Network.{" "}
             <strong>Never</strong> send real Eth to your testnet address. If you
             did, you would lose it.{" "}
             <a
@@ -268,7 +269,7 @@ const App = () => {
               Testnets
             </a>{" "}
             use test Eth which you can get for free from{" "}
-            <a href="https://faucets.chain.link/rinkeby" target="_blank">
+            <a href="https://faucets.chain.link/goerli" target="_blank">
               Chainlink
             </a>{" "}
             or other faucets. It is recommended that you create a separate
