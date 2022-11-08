@@ -13,7 +13,7 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 const App = () => {
   // smart contract details
 
-  const CONTRACT_ADDRESS = "0x5A4BB9aE5ca5bE73997b523108b52B0D52eaCf4c";
+  const CONTRACT_ADDRESS = "0x1B87dAeb6c25c0582D96ef29f7eE07C50Ff88Fa4";
   const contractABI = abi.abi;
 
   // state variables
